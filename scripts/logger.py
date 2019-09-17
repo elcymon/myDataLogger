@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String,Bool
 import os
 import time
 
@@ -25,17 +25,18 @@ class Logger:
         robotID,logData = data.data.split(':')
 
         with open(self.resultLogPath + '/' + robotID + '.csv','a') as f:
-            f.write(self.ROStimeStep + ',' + logData+'\n')
+            f.write('{:.2f}'.format(self.ROStimeStep) + ',' + logData+'\n')
     
     def loopLogger(self):
         rate = rospy.Rate(self.hz)
-
+        pub_experimentStart = rospy.Publisher('/experimentStart',Bool,queue_size=1)
         time.sleep(self.experimentWaitDuration)
 
         t = rospy.Time.now().to_sec()
         while not rospy.is_shutdown():
             self.ROStimeStep = rospy.Time.now().to_sec() - t
             print self.ROStimeStep
+            pub_experimentStart.publish(True)
             rate.sleep()
 
 if __name__ == '__main__':
