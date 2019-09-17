@@ -9,7 +9,8 @@ class Logger:
         self.hz = 40
         self.experimentWaitDuration = experimentWaitDuration
 
-        self.log = rospy.Subscriber('/log',String,self.callback_log,queue_size=1)
+        self.log = {'nest':rospy.Subscriber('/nest/log',String,self.callback_log,queue_size=5),
+                'robot1':rospy.Subscriber('/robot1/log',String,self.callback_log,queue_size=5)}
         
         self.ROStimeStep = 0#rospy.Time.now()
         
@@ -25,7 +26,7 @@ class Logger:
         robotID,logData = data.data.split(':')
 
         with open(self.resultLogPath + '/' + robotID + '.csv','a') as f:
-            f.write('{:.2f}'.format(self.ROStimeStep) + ',' + logData+'\n')
+            f.write('{:.4f}'.format(self.ROStimeStep) + ',' + logData+'\n')
     
     def loopLogger(self):
         rate = rospy.Rate(self.hz)
