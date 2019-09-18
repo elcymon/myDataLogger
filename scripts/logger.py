@@ -24,9 +24,13 @@ class Logger:
 
     def callback_log(self,data):
         robotID,logData = data.data.split(':')
-
+        if 'yaw' not in logData:
+            logData = '{:.4f}'.format(self.ROStimeStep) + ',' + logData+'\n'
+        else:
+            logData = logData + '\n'
+        
         with open(self.resultLogPath + '/' + robotID + '.csv','a') as f:
-            f.write('{:.4f}'.format(self.ROStimeStep) + ',' + logData+'\n')
+            f.write(logData)
     
     def loopLogger(self):
         rate = rospy.Rate(self.hz)
